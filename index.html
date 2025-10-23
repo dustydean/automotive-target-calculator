@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Target CPA & CPL Calculator - Calculate Your Profitability-Based Targets</title>
+	<script>
+		(function() {
+			const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (prefersDark) {
+				document.documentElement.setAttribute('data-theme', 'dark');
+			} else {
+				document.documentElement.setAttribute('data-theme', 'light');
+			}
+		})();
+	</script>
+	<style>
+		:root {
+			--bg-primary: #f8f9fa;
+			--bg-secondary: #ffffff;
+			--bg-card: #ffffff;
+			--text-primary: #333333;
+			--text-secondary: #666666;
+			--text-light: #999999;
+			--accent-primary: #3498db;
+			--accent-success: #27ae60;
+			--accent-info: #5dade2;
+			--border-color: #e0e0e0;
+			--shadow-color: rgba(0, 0, 0, 0.08);
+		}
+
+		[data-theme="dark"] {
+			--bg-primary: #1a1a1a;
+			--bg-secondary: #2d2d2d;
+			--bg-card: #2d2d2d;
+			--text-primary: #e0e0e0;
+			--text-secondary: #b0b0b0;
+			--text-light: #888888;
+			--accent-primary: #5dade2;
+			--accent-success: #58d68d;
+			--accent-info: #85c1e9;
+			--border-color: #404040;
+			--shadow-color: rgba(0, 0, 0, 0.3);
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background-color: var(--bg-primary);
+			color: var(--text-primary);
+			line-height: 1.6;
+			padding: 40px 20px;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		.theme-toggle {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: var(--bg-secondary);
+			border: 2px solid var(--border-color);
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.5em;
+			box-shadow: 0 2px 10px var(--shadow-color);
+			transition: all 0.3s ease;
+			z-index: 1000;
+		}
+
+		.theme-toggle:hover {
+			transform: scale(1.1);
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 50px;
+		}
+
+		header h1 {
+			font-size: 2.2em;
+			color: var(--text-primary);
+			margin-bottom: 10px;
+			font-weight: 600;
+		}
+
+		header p {
+			font-size: 1.1em;
+			color: var(--text-secondary);
+		}
+
+		.intro-card {
+			background: linear-gradient(135deg, var(--accent-primary) 0%, #2980b9 100%);
+			color: white;
+			padding: 30px;
+			border-radius: 12px;
+			margin-bottom: 40px;
+			box-shadow: 0 4px 15px var(--shadow-color);
+		}
+
+		.intro-card h2 {
+			font-size: 1.4em;
+			margin-bottom: 15px;
+			font-weight: 600;
+		}
+
+		.intro-card p {
+			font-size: 1.05em;
+			line-height: 1.7;
+			opacity: 0.95;
+		}
+
+		.assumptions-section {
+			background: var(--bg-card);
+			border: 2px solid var(--border-color);
+			border-radius: 12px;
+			padding: 25px;
+			margin-bottom: 40px;
+			box-shadow: 0 2px 10px var(--shadow-color);
+		}
+
+		.assumptions-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			border-bottom: 2px solid var(--border-color);
+		}
+
+		.assumptions-header h3 {
+			font-size: 1.2em;
+			color: var(--text-primary);
+			font-weight: 600;
+		}
+
+		.assumptions-note {
+			font-size: 0.9em;
+			color: var(--text-secondary);
+			font-style: italic;
+		}
+
+		.assumptions-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 20px;
+		}
+
+		.input-group {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.input-group label {
+			font-weight: 600;
+			margin-bottom: 8px;
+			color: var(--text-primary);
+			font-size: 0.95em;
+		}
+
+		.input-group input {
+			padding: 12px;
+			border: 2px solid var(--border-color);
+			border-radius: 8px;
+			font-size: 1.05em;
+			background: var(--bg-primary);
+			color: var(--text-primary);
+			transition: all 0.3s ease;
+			font-weight: 500;
+		}
+
+		.input-group input:focus {
+			outline: none;
+			border-color: var(--accent-primary);
+			box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+		}
+
+		.input-group .helper-text {
+			font-size: 0.85em;
+			color: var(--text-secondary);
+			margin-top: 5px;
+			line-height: 1.5;
+		}
+
+		.tooltip {
+			display: inline-block;
+			width: 18px;
+			height: 18px;
+			background: var(--accent-info);
+			color: white;
+			border-radius: 50%;
+			text-align: center;
+			font-size: 0.8em;
+			font-weight: bold;
+			margin-left: 6px;
+			cursor: help;
+			line-height: 18px;
+		}
+
+		.tooltip:hover::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			background: var(--text-primary);
+			color: var(--bg-primary);
+			padding: 10px 15px;
+			border-radius: 6px;
+			font-size: 0.85em;
+			font-weight: normal;
+			white-space: normal;
+			width: 280px;
+			margin-left: -140px;
+			margin-top: 25px;
+			z-index: 1000;
+			box-shadow: 0 4px 12px var(--shadow-color);
+			line-height: 1.5;
+		}
+
+		.results-section {
+			display: grid;
+			gap: 30px;
+		}
+
+		.result-card {
+			background: var(--bg-card);
+			border-radius: 12px;
+			padding: 30px;
+			box-shadow: 0 2px 10px var(--shadow-color);
+		}
+
+		.result-card h3 {
+			font-size: 1.3em;
+			color: var(--text-primary);
+			margin-bottom: 20px;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.target-display {
+			background: linear-gradient(135deg, var(--accent-success) 0%, #229954 100%);
+			color: white;
+			padding: 30px;
+			border-radius: 10px;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.target-label {
+			font-size: 1em;
+			opacity: 0.9;
+			margin-bottom: 10px;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.target-value {
+			font-size: 3.5em;
+			font-weight: 700;
+			margin-bottom: 10px;
+		}
+
+		.target-subtitle {
+			font-size: 1.05em;
+			opacity: 0.95;
+		}
+
+		.math-explanation {
+			background: var(--bg-primary);
+			border-left: 4px solid var(--accent-primary);
+			padding: 20px;
+			border-radius: 6px;
+			margin: 20px 0;
+		}
+
+		.math-explanation h4 {
+			color: var(--accent-primary);
+			margin-bottom: 12px;
+			font-size: 1.05em;
+		}
+
+		.math-step {
+			font-family: 'Courier New', monospace;
+			font-size: 0.95em;
+			color: var(--text-secondary);
+			margin: 8px 0;
+			padding-left: 10px;
+		}
+
+		.channel-targets {
+			display: grid;
+			gap: 15px;
+			margin-top: 20px;
+		}
+
+		.channel-row {
+			display: grid;
+			grid-template-columns: 180px 1fr 1fr;
+			gap: 15px;
+			align-items: center;
+			padding: 15px;
+			background: var(--bg-primary);
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+		}
+
+		.channel-name {
+			font-weight: 600;
+			color: var(--text-primary);
+		}
+
+		.channel-metric {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.channel-metric-label {
+			font-size: 0.85em;
+			color: var(--text-secondary);
+			margin-bottom: 3px;
+		}
+
+		.channel-metric-value {
+			font-size: 1.1em;
+			font-weight: 600;
+			color: var(--accent-primary);
+		}
+
+		.insight-box {
+			background: var(--bg-primary);
+			padding: 20px;
+			border-radius: 8px;
+			border-left: 4px solid var(--accent-info);
+			margin-top: 20px;
+		}
+
+		.insight-box h4 {
+			color: var(--accent-info);
+			margin-bottom: 10px;
+			font-size: 1.05em;
+		}
+
+		.insight-box p {
+			color: var(--text-secondary);
+			line-height: 1.7;
+			margin-bottom: 10px;
+		}
+
+		.insight-box ul {
+			margin-left: 20px;
+			color: var(--text-secondary);
+		}
+
+		.insight-box li {
+			margin: 8px 0;
+			line-height: 1.6;
+		}
+
+		.conversion-breakdown {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 15px;
+			margin-top: 20px;
+		}
+
+		.conversion-stage {
+			background: var(--bg-primary);
+			padding: 15px;
+			border-radius: 8px;
+			text-align: center;
+			border: 2px solid var(--border-color);
+		}
+
+		.conversion-stage-label {
+			font-size: 0.9em;
+			color: var(--text-secondary);
+			margin-bottom: 8px;
+		}
+
+		.conversion-stage-value {
+			font-size: 1.8em;
+			font-weight: 700;
+			color: var(--accent-primary);
+		}
+
+		.footer {
+			text-align: center;
+			margin-top: 50px;
+			padding-top: 30px;
+			border-top: 1px solid var(--border-color);
+			color: var(--text-light);
+			font-size: 0.9em;
+		}
+
+		@media (max-width: 768px) {
+			header h1 {
+				font-size: 1.8em;
+			}
+
+			.assumptions-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.channel-row {
+				grid-template-columns: 1fr;
+				gap: 10px;
+			}
+
+			.conversion-breakdown {
+				grid-template-columns: 1fr;
+			}
+
+			.target-value {
+				font-size: 2.5em;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+			<span id="themeIcon">🌙</span>
+		</button>
+
+		<header>
+			<h1>Target CPA & CPL Calculator</h1>
+			<p>Calculate what your Cost Per Acquisition and Cost Per Lead targets should be based on your dealership's profitability</p>
+		</header>
+
+		<div class="intro-card">
+			<h2>📊 How This Works</h2>
+			<p>This tool helps you calculate what your Cost Per Acquisition (CPA) and Cost Per Lead (CPL) targets should be based on your specific profitability and conversion rates. I've pre-filled it with typical numbers for automotive dealerships to save you time - just adjust any numbers that are different for you, and the targets will recalculate instantly.</p>
+			<p style="margin-top: 15px;"><strong>💡 Pro tip:</strong> You'll need to gather a few numbers from your sales and BDC teams. Don't worry - I've added helpful tips next to each field showing exactly who to ask and what question to ask them.</p>
+		</div>
+
+		<div class="assumptions-section">
+			<div class="assumptions-header">
+				<h3>Your Dealership Metrics</h3>
+				<span class="assumptions-note">Pre-filled with typical values - adjust as needed</span>
+			</div>
+			<div class="assumptions-grid">
+				<div class="input-group">
+					<label for="grossProfit">
+						Average Gross Profit Per Sale
+						<span class="tooltip" data-tooltip="This is front-end gross (vehicle profit after prep/fees) PLUS back-end F&I (warranties, GAP, financing). Varies by model/brand: Entry/economy vehicles $2,500-3,500 | Mid-range/mainstream $4,000-5,000 | Premium/luxury $5,500-7,500. Your actual number depends on your specific sales mix and brand. Get YOUR exact number from your Sales Manager.">?</span>
+					</label>
+					<input type="number" id="grossProfit" value="4800" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your Sales Manager or GM - "What was our average total gross per sale last month, including F&I?" (Varies by model mix: Entry $2,500-3,500 | Mid $4,000-5,000 | Premium $5,500-7,500)</span>
+				</div>
+				<div class="input-group">
+					<label for="marketingPercent">
+						Marketing % of Gross Profit
+						<span class="tooltip" data-tooltip="Industry benchmark from NADA: 15-30% of gross profit allocated to advertising/marketing. Lower-volume dealers typically run 20-30%, high-volume dealers 12-20%. Ask your GM what percentage they're comfortable allocating. Starting point: 25% is middle-of-road conservative.">?</span>
+					</label>
+					<input type="number" id="marketingPercent" value="25" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your GM - "What % of gross profit should I allocate to digital marketing?" Industry range: 15-30% (NADA benchmark)</span>
+				</div>
+				<div class="input-group">
+					<label for="leadToAppt">
+						Lead-to-Appointment Rate (%)
+						<span class="tooltip" data-tooltip="Check your CRM: (Appointments Set ÷ Total Leads) × 100. This is your BDC's conversion rate from inquiry to scheduled appointment. Industry average: 20-30%. If you don't track this, ask your BDC manager to pull last month's data.">?</span>
+					</label>
+					<input type="number" id="leadToAppt" value="28" step="0.1" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Check your CRM or ask your BDC Manager - "What % of digital leads schedule appointments?"</span>
+				</div>
+				<div class="input-group">
+					<label for="showRate">
+						Appointment Show Rate (%)
+						<span class="tooltip" data-tooltip="Check your CRM: (Showed Up ÷ Appointments Set) × 100. This tracks how many scheduled appointments actually arrive at the dealership. Industry average: 60-75%. Ask your BDC manager or check your DMS reports.">?</span>
+					</label>
+					<input type="number" id="showRate" value="68" step="0.1" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your BDC Manager - "What % of scheduled appointments actually show up?"</span>
+				</div>
+				<div class="input-group">
+					<label for="closeRate">
+						Showroom Close Rate (%)
+						<span class="tooltip" data-tooltip="Check your DMS: (Vehicles Sold ÷ Showroom Visits) × 100. This is your sales team's closing rate for customers who physically visit. Industry average: 20-25% for mainstream brands, 15-20% for luxury. Ask your Sales Manager for last month's close rate.">?</span>
+					</label>
+					<input type="number" id="closeRate" value="23" step="0.1" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your Sales Manager - "What was our showroom close rate last month?"</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="results-section">
+			<!-- Target CPA -->
+			<div class="result-card">
+				<h3>🎯 Your Target Cost Per Acquisition (CPA)</h3>
+
+				<div class="target-display">
+					<div class="target-label">Maximum Cost Per Sale</div>
+					<div class="target-value">$<span id="targetCPA">1,200</span></div>
+					<div class="target-subtitle">This is the most you can spend to acquire one customer</div>
+				</div>
+
+				<div class="math-explanation">
+					<h4>How We Calculate This:</h4>
+					<div class="math-step">Gross Profit Per Sale: $<span id="mathGrossProfit">4,800</span></div>
+					<div class="math-step">× Marketing % of Gross: <span id="mathMarketingPercent">25</span>%</div>
+					<div class="math-step">= Target CPA: $<span id="mathTargetCPA">1,200</span></div>
+				</div>
+
+				<div class="insight-box">
+					<h4>💡 What This Means</h4>
+					<p>Based on your $<span id="insightGrossProfit">4,800</span> gross profit and <span id="insightMarketingPercent">25</span>% marketing allocation, you can spend up to $<span id="insightTargetCPA">1,200</span> to acquire one customer and still maintain your target margins.</p>
+					<p><strong>If your actual cost per sale is higher than this, you're eroding profit margins. If it's lower, you have room to invest more in customer acquisition.</strong></p>
+				</div>
+
+				<div class="insight-box" style="border-left-color: var(--accent-info); margin-top: 15px;">
+					<h4>📚 About the Marketing % Benchmark</h4>
+					<p>The 25% default comes from NADA (National Automobile Dealers Association) industry data, which shows dealerships typically allocate <strong>15-30% of gross profit to advertising and marketing</strong>.</p>
+					<p style="margin-top: 10px;"><strong>How to know YOUR right number:</strong></p>
+					<ul style="margin-top: 8px;">
+						<li><strong>New/growing dealership:</strong> 25-30% (need to build awareness)</li>
+						<li><strong>Established mid-market:</strong> 20-25% (maintaining position)</li>
+						<li><strong>High-volume metro:</strong> 15-20% (brand does heavy lifting)</li>
+						<li><strong>Digital-only spend:</strong> Usually 50-70% of total marketing budget</li>
+					</ul>
+					<p style="margin-top: 10px;"><em>Ask your GM what they're comfortable with, then adjust the percentage above. The calculator will update your targets automatically.</em></p>
+				</div>
+			</div>
+
+			<!-- Target CPL -->
+			<div class="result-card">
+				<h3>📍 Your Target Cost Per Lead (CPL)</h3>
+
+				<div class="target-display" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+					<div class="target-label">Maximum Cost Per Lead</div>
+					<div class="target-value">$<span id="targetCPL">53</span></div>
+					<div class="target-subtitle">This is the most you can spend per lead and hit your CPA target</div>
+				</div>
+
+				<div class="conversion-breakdown">
+					<div class="conversion-stage">
+						<div class="conversion-stage-label">Lead-to-Appt</div>
+						<div class="conversion-stage-value"><span id="displayLeadToAppt">28</span>%</div>
+					</div>
+					<div class="conversion-stage">
+						<div class="conversion-stage-label">Show Rate</div>
+						<div class="conversion-stage-value"><span id="displayShowRate">68</span>%</div>
+					</div>
+					<div class="conversion-stage">
+						<div class="conversion-stage-label">Close Rate</div>
+						<div class="conversion-stage-value"><span id="displayCloseRate">23</span>%</div>
+					</div>
+					<div class="conversion-stage" style="border-color: var(--accent-primary); border-width: 3px;">
+						<div class="conversion-stage-label">Overall Conversion</div>
+						<div class="conversion-stage-value"><span id="overallConversion">4.4</span>%</div>
+					</div>
+				</div>
+
+				<div class="math-explanation">
+					<h4>How We Calculate This:</h4>
+					<div class="math-step">Overall Conversion = <span id="mathLeadToAppt">28</span>% × <span id="mathShowRate">68</span>% × <span id="mathCloseRate">23</span>% = <span id="mathOverallConversion">4.4</span>%</div>
+					<div class="math-step">Target CPL = Target CPA × Overall Conversion</div>
+					<div class="math-step">Target CPL = $<span id="mathTargetCPA2">1,200</span> × <span id="mathOverallConversion2">4.4</span>% = $<span id="mathTargetCPL">53</span></div>
+				</div>
+
+				<div class="insight-box">
+					<h4>💡 What This Means</h4>
+					<p>Since only <span id="insightConversion">4.4</span>% of your leads turn into sales (based on your funnel conversion rates), you need to keep your average CPL at or below $<span id="insightTargetCPL">53</span> to maintain your target cost per sale of $<span id="insightTargetCPA2">1,200</span>.</p>
+					<p><strong>If your blended CPL is above $<span id="insightTargetCPL2">53</span>, you need to either: (1) lower your CPL, (2) improve conversion rates, or (3) adjust your marketing budget percentage.</strong></p>
+				</div>
+			</div>
+
+			<!-- Platform Implementation -->
+			<div class="result-card">
+				<h3>🎯 How to Implement Your Targets in Ad Platforms</h3>
+				<p style="color: var(--text-secondary); margin-bottom: 20px;">Now that you know your target CPA of <strong>$<span id="implementTargetCPA">1,200</span></strong>, here's how to use it in Google Ads and Meta to automatically control costs and scale efficiently:</p>
+
+				<div class="insight-box" style="border-left-color: #4285f4;">
+					<h4>🔍 Google Ads: Target CPA Bidding</h4>
+					<p><strong>What it is:</strong> An automated bid strategy that sets bids to get as many conversions as possible at your target cost per acquisition.</p>
+
+					<p style="margin-top: 15px;"><strong>How it works:</strong></p>
+					<ul>
+						<li>Google's algorithm adjusts your bids in real-time based on the likelihood of conversion</li>
+						<li>It considers device, location, time of day, and user signals to optimize each auction</li>
+						<li>Bids higher when a conversion is more likely, lower when it's less likely</li>
+						<li>Over time, it learns which users are most likely to convert and prioritizes them</li>
+					</ul>
+
+					<p style="margin-top: 15px;"><strong>How to set it up:</strong></p>
+					<ol style="margin-left: 20px; color: var(--text-secondary);">
+						<li>In Google Ads, go to Settings → Bidding</li>
+						<li>Select "Target CPA" as your bid strategy</li>
+						<li>Enter your target: <strong>$<span id="googleTargetCPA">1,200</span></strong> (your calculated target from above)</li>
+						<li>Google recommends at least 30 conversions in the last 30 days for best performance</li>
+					</ol>
+
+					<p style="margin-top: 15px;"><strong>Benefits for scalability:</strong></p>
+					<ul>
+						<li><strong>Automatic cost control:</strong> Google won't consistently overspend your target (though individual conversions may vary)</li>
+						<li><strong>Scales with you:</strong> As you increase budget, it finds more conversions at the same target CPA</li>
+						<li><strong>Saves time:</strong> No manual bid adjustments needed - the algorithm optimizes 24/7</li>
+						<li><strong>Adapts to seasonality:</strong> Automatically adjusts for market changes and competition shifts</li>
+					</ul>
+
+					<p style="margin-top: 15px; padding: 12px; background: var(--bg-card); border-radius: 6px;"><strong>📚 Learn more:</strong> <a href="https://support.google.com/google-ads/answer/6268632?hl=en" target="_blank" style="color: var(--accent-primary);">Google Ads Target CPA Bidding Guide</a></p>
+				</div>
+
+				<div class="insight-box" style="border-left-color: #0668e1; margin-top: 20px;">
+					<h4>📱 Meta Ads: Cost Per Result Goal</h4>
+					<p><strong>What it is:</strong> A bid control that tells Meta's algorithm the maximum amount you want to pay per conversion (lead, purchase, etc.) on average.</p>
+
+					<p style="margin-top: 15px;"><strong>How it works:</strong></p>
+					<ul>
+						<li>Meta's delivery system focuses on showing ads to people likely to convert at or below your cost goal</li>
+						<li>It uses machine learning based on past conversion data from your Pixel/Conversions API</li>
+						<li>The system enters auctions where it can meet your cost goal and skips auctions that would exceed it</li>
+						<li>Balances between volume and cost efficiency automatically</li>
+					</ul>
+
+					<p style="margin-top: 15px;"><strong>How to set it up:</strong></p>
+					<ol style="margin-left: 20px; color: var(--text-secondary);">
+						<li>When creating a campaign, choose your conversion objective (Leads, Sales, etc.)</li>
+						<li>In Ad Set settings, go to "Optimization & Delivery"</li>
+						<li>Under "Cost per result goal," toggle it ON</li>
+						<li>Enter your target: <strong>$<span id="metaTargetCPA">1,200</span></strong> per conversion</li>
+						<li>Meta recommends at least 50 conversions per week for optimal performance</li>
+					</ol>
+
+					<p style="margin-top: 15px;"><strong>Benefits for scalability:</strong></p>
+					<ul>
+						<li><strong>Volume with guardrails:</strong> Meta tries to maximize conversions while respecting your cost ceiling</li>
+						<li><strong>Testing efficiency:</strong> You can test new audiences/creatives knowing costs won't spiral</li>
+						<li><strong>Budget flexibility:</strong> Increase budget and Meta will find more conversions at your target cost</li>
+						<li><strong>Prevents overspending:</strong> If Meta can't achieve your cost goal, it will under-deliver budget rather than exceed your target</li>
+					</ul>
+
+					<p style="margin-top: 15px; padding: 12px; background: var(--bg-card); border-radius: 6px;"><strong>📚 Learn more:</strong> <a href="https://www.facebook.com/business/help/272336376749096?id=2196356200683573" target="_blank" style="color: var(--accent-primary);">Meta Cost Per Result Goal Guide</a></p>
+				</div>
+
+				<div class="insight-box" style="background: linear-gradient(135deg, var(--accent-success) 0%, #229954 100%); color: white; margin-top: 20px;">
+					<h4 style="color: white;">💡 Pro Strategy: Let the Algorithms Do the Heavy Lifting</h4>
+					<p style="color: white; opacity: 0.95;">Instead of manually managing bids across keywords, audiences, and placements, modern automated bidding strategies (like Target CPA and Cost Per Result Goal) use machine learning trained on billions of signals to optimize in real-time.</p>
+					<p style="color: white; opacity: 0.95; margin-top: 10px;"><strong>Your role shifts from bid management to strategy:</strong></p>
+					<ul style="color: white; opacity: 0.95;">
+						<li>Set the right target CPA (you just calculated it: <strong>$<span id="strategyTargetCPA">1,200</span></strong>)</li>
+						<li>Feed the algorithms with quality conversion data (proper tracking setup)</li>
+						<li>Test new audiences, ad creative, and messaging</li>
+						<li>Monitor performance and adjust targets as profitability changes</li>
+					</ul>
+					<p style="color: white; opacity: 0.95; margin-top: 10px;"><strong>Result:</strong> More conversions, less manual work, controlled costs, and easy scalability.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="footer">
+			<p>Calculations based on standard automotive dealership profitability models.</p>
+			<p>Adjust the inputs above to match your specific dealership's performance.</p>
+		</div>
+	</div>
+
+	<script>
+		function toggleTheme() {
+			const html = document.documentElement;
+			const currentTheme = html.getAttribute('data-theme');
+			const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+			html.setAttribute('data-theme', newTheme);
+			document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+		}
+
+		const currentTheme = document.documentElement.getAttribute('data-theme');
+		document.getElementById('themeIcon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+		function calculate() {
+			// Get inputs
+			const grossProfit = parseFloat(document.getElementById('grossProfit').value) || 0;
+			const marketingPercent = parseFloat(document.getElementById('marketingPercent').value) / 100 || 0;
+			const leadToAppt = parseFloat(document.getElementById('leadToAppt').value) / 100 || 0;
+			const showRate = parseFloat(document.getElementById('showRate').value) / 100 || 0;
+			const closeRate = parseFloat(document.getElementById('closeRate').value) / 100 || 0;
+
+			// Calculate target CPA
+			const targetCPA = grossProfit * marketingPercent;
+
+			// Calculate overall conversion
+			const overallConversion = leadToAppt * showRate * closeRate;
+
+			// Calculate target CPL
+			const targetCPL = targetCPA * overallConversion;
+
+			// Update target CPA section
+			document.getElementById('targetCPA').textContent = targetCPA.toFixed(0);
+			document.getElementById('mathGrossProfit').textContent = grossProfit.toFixed(0);
+			document.getElementById('mathMarketingPercent').textContent = (marketingPercent * 100).toFixed(0);
+			document.getElementById('mathTargetCPA').textContent = targetCPA.toFixed(0);
+			document.getElementById('insightGrossProfit').textContent = grossProfit.toFixed(0);
+			document.getElementById('insightMarketingPercent').textContent = (marketingPercent * 100).toFixed(0);
+			document.getElementById('insightTargetCPA').textContent = targetCPA.toFixed(0);
+
+			// Update target CPL section
+			document.getElementById('targetCPL').textContent = targetCPL.toFixed(0);
+			document.getElementById('displayLeadToAppt').textContent = (leadToAppt * 100).toFixed(1);
+			document.getElementById('displayShowRate').textContent = (showRate * 100).toFixed(1);
+			document.getElementById('displayCloseRate').textContent = (closeRate * 100).toFixed(1);
+			document.getElementById('overallConversion').textContent = (overallConversion * 100).toFixed(1);
+			document.getElementById('mathLeadToAppt').textContent = (leadToAppt * 100).toFixed(1);
+			document.getElementById('mathShowRate').textContent = (showRate * 100).toFixed(1);
+			document.getElementById('mathCloseRate').textContent = (closeRate * 100).toFixed(1);
+			document.getElementById('mathOverallConversion').textContent = (overallConversion * 100).toFixed(1);
+			document.getElementById('mathTargetCPA2').textContent = targetCPA.toFixed(0);
+			document.getElementById('mathOverallConversion2').textContent = (overallConversion * 100).toFixed(1);
+			document.getElementById('mathTargetCPL').textContent = targetCPL.toFixed(0);
+			document.getElementById('insightConversion').textContent = (overallConversion * 100).toFixed(1);
+			document.getElementById('insightTargetCPL').textContent = targetCPL.toFixed(0);
+			document.getElementById('insightTargetCPA2').textContent = targetCPA.toFixed(0);
+			document.getElementById('insightTargetCPL2').textContent = targetCPL.toFixed(0);
+
+			// Update platform implementation section
+			document.getElementById('implementTargetCPA').textContent = targetCPA.toFixed(0);
+			document.getElementById('googleTargetCPA').textContent = targetCPA.toFixed(0);
+			document.getElementById('metaTargetCPA').textContent = targetCPA.toFixed(0);
+			document.getElementById('strategyTargetCPA').textContent = targetCPA.toFixed(0);
+		}
+
+		// Calculate on page load
+		window.addEventListener('DOMContentLoaded', calculate);
+	</script>
+</body>
+</html>
