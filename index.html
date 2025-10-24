@@ -471,26 +471,26 @@
 				<div class="input-group">
 					<label for="leadToAppt">
 						Lead-to-Appointment Rate (%)
-						<span class="tooltip" data-tooltip="Check your CRM: (Appointments Set ÷ Total Leads) × 100. This is your BDC's conversion rate from inquiry to scheduled appointment. Industry average: 20-30%. If you don't track this, ask your BDC manager to pull last month's data.">?</span>
+						<span class="tooltip" data-tooltip="Check your CRM: (Appointments Set ÷ Total Leads) × 100. This is your BDC's conversion rate from inquiry to scheduled appointment. Industry benchmark for internet leads: 32% (Foureyes study of ~700 dealers, H2 2023). If you don't track this, ask your BDC manager to pull last month's data.">?</span>
 					</label>
-					<input type="number" id="leadToAppt" value="28" step="0.1" oninput="calculate()">
-					<span class="helper-text"><strong>Where to get this:</strong> Check your CRM or ask your BDC Manager - "What % of digital leads schedule appointments?"</span>
+					<input type="number" id="leadToAppt" value="32" step="0.1" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Check your CRM or ask your BDC Manager - "What % of digital leads schedule appointments?" (Industry avg: 32% for internet leads)</span>
 				</div>
 				<div class="input-group">
 					<label for="showRate">
 						Appointment Show Rate (%)
-						<span class="tooltip" data-tooltip="Check your CRM: (Showed Up ÷ Appointments Set) × 100. This tracks how many scheduled appointments actually arrive at the dealership. Industry average: 60-75%. Ask your BDC manager or check your DMS reports.">?</span>
+						<span class="tooltip" data-tooltip="Check your CRM: (Showed Up ÷ Appointments Set) × 100. This tracks how many scheduled appointments actually arrive at the dealership. Industry benchmark for internet-sourced appointments: 56% (Foureyes study of ~700 dealers, H2 2023). Ask your BDC manager or check your DMS reports.">?</span>
 					</label>
-					<input type="number" id="showRate" value="68" step="0.1" oninput="calculate()">
-					<span class="helper-text"><strong>Where to get this:</strong> Ask your BDC Manager - "What % of scheduled appointments actually show up?"</span>
+					<input type="number" id="showRate" value="56" step="0.1" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your BDC Manager - "What % of scheduled appointments actually show up?" (Industry avg: 56% for internet leads)</span>
 				</div>
 				<div class="input-group">
 					<label for="closeRate">
 						Showroom Close Rate (%)
-						<span class="tooltip" data-tooltip="Check your DMS: (Vehicles Sold ÷ Showroom Visits) × 100. This is your sales team's closing rate for customers who physically visit. Industry average: 20-25% for mainstream brands, 15-20% for luxury. Ask your Sales Manager for last month's close rate.">?</span>
+						<span class="tooltip" data-tooltip="Check your DMS: (Vehicles Sold ÷ Showroom Visits) × 100. This is your sales team's closing rate for customers who physically visit. Industry benchmark for internet leads: 42% (Foureyes study of ~700 dealers, H2 2023). Note: Internet leads tend to close higher than walk-ins due to higher purchase intent. Ask your Sales Manager for last month's close rate.">?</span>
 					</label>
-					<input type="number" id="closeRate" value="23" step="0.1" oninput="calculate()">
-					<span class="helper-text"><strong>Where to get this:</strong> Ask your Sales Manager - "What was our showroom close rate last month?"</span>
+					<input type="number" id="closeRate" value="42" step="0.1" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your Sales Manager - "What was our showroom close rate for internet-sourced appointments last month?" (Industry avg: 42% for internet leads)</span>
 				</div>
 			</div>
 		</div>
@@ -662,6 +662,7 @@
 		<div class="footer">
 			<p>Calculations based on standard automotive dealership profitability models.</p>
 			<p>Adjust the inputs above to match your specific dealership's performance.</p>
+			<p style="margin-top: 15px; font-size: 0.85em;"><strong>Data Sources:</strong> Default funnel conversion rates based on Foureyes analysis of ~700 automotive dealers (H2 2023). Marketing % benchmarks from NADA (National Automobile Dealers Association) industry data. <a href="https://www.prweb.com/releases/automotive-dealership-data-study-identifies-appointment-rate-benchmarks-across-q3-andq4-2023-302049252.html" target="_blank" style="color: var(--accent-primary);">View Foureyes Study</a></p>
 		</div>
 	</div>
 
