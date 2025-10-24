@@ -455,18 +455,18 @@
 				<div class="input-group">
 					<label for="grossProfit">
 						Average Gross Profit Per Sale
-						<span class="tooltip" data-tooltip="This is front-end gross (vehicle profit after prep/fees) PLUS back-end F&I (warranties, GAP, financing). Varies by model/brand: Entry/economy vehicles $2,500-3,500 | Mid-range/mainstream $4,000-5,000 | Premium/luxury $5,500-7,500. Your actual number depends on your specific sales mix and brand. Get YOUR exact number from your Sales Manager.">?</span>
+						<span class="tooltip" data-tooltip="This is front-end gross (vehicle profit after prep/fees) PLUS back-end F&I (warranties, GAP, financing). Recent data shows $1.7-3.3K front-end per new vehicle (Haig Partners, Presidio-NCM 2024-25), plus ~$1.5-1.8K F&I = $3.2-5.1K total. Varies by brand: Entry/economy $2,500-3,500 | Mid-range/mainstream $3,500-4,500 | Premium/luxury $5,500-7,500. Get YOUR exact number from your Sales Manager.">?</span>
 					</label>
-					<input type="number" id="grossProfit" value="4800" oninput="calculate()">
-					<span class="helper-text"><strong>Where to get this:</strong> Ask your Sales Manager or GM - "What was our average total gross per sale last month, including F&I?" (Varies by model mix: Entry $2,500-3,500 | Mid $4,000-5,000 | Premium $5,500-7,500)</span>
+					<input type="number" id="grossProfit" value="4000" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your Sales Manager or GM - "What was our average total gross per sale last month, including F&I?" (Industry avg: $3,200-5,100 depending on brand mix)</span>
 				</div>
 				<div class="input-group">
 					<label for="marketingPercent">
 						Marketing % of Gross Profit
-						<span class="tooltip" data-tooltip="Industry benchmark from NADA: 15-30% of gross profit allocated to advertising/marketing. Lower-volume dealers typically run 20-30%, high-volume dealers 12-20%. Ask your GM what percentage they're comfortable allocating. Starting point: 25% is middle-of-road conservative.">?</span>
+						<span class="tooltip" data-tooltip="Industry benchmark from NADA: Dealers allocate 6-10% of gross profit to total marketing/advertising (NADA 2023-24). This covers all channels: digital (70-75% of budget), traditional media, sponsorships, etc. Conservative starting point: 10% allows for comprehensive marketing investment while maintaining profitability.">?</span>
 					</label>
-					<input type="number" id="marketingPercent" value="25" oninput="calculate()">
-					<span class="helper-text"><strong>Where to get this:</strong> Ask your GM - "What % of gross profit should I allocate to digital marketing?" Industry range: 15-30% (NADA benchmark)</span>
+					<input type="number" id="marketingPercent" value="10" oninput="calculate()">
+					<span class="helper-text"><strong>Where to get this:</strong> Ask your GM - "What % of gross profit should I allocate to total marketing?" Industry range: 6-10% of gross profit (NADA benchmark)</span>
 				</div>
 				<div class="input-group">
 					<label for="leadToAppt">
@@ -521,13 +521,18 @@
 
 				<div class="insight-box" style="border-left-color: var(--accent-info); margin-top: 15px;">
 					<h4>📚 About the Marketing % Benchmark</h4>
-					<p>The 25% default comes from NADA (National Automobile Dealers Association) industry data, which shows dealerships typically allocate <strong>15-30% of gross profit to advertising and marketing</strong>.</p>
-					<p style="margin-top: 10px;"><strong>How to know YOUR right number:</strong></p>
+					<p>The 10% default comes from NADA (National Automobile Dealers Association) industry data, which shows dealerships typically allocate <strong>6-10% of gross profit to total advertising and marketing</strong> (NADA 2023-24, Haig Partners).</p>
+					<p style="margin-top: 10px;"><strong>What this covers:</strong></p>
 					<ul style="margin-top: 8px;">
-						<li><strong>New/growing dealership:</strong> 25-30% (need to build awareness)</li>
-						<li><strong>Established mid-market:</strong> 20-25% (maintaining position)</li>
-						<li><strong>High-volume metro:</strong> 15-20% (brand does heavy lifting)</li>
-						<li><strong>Digital-only spend:</strong> Usually 50-70% of total marketing budget</li>
+						<li><strong>Digital channels:</strong> 70-75% of budget (Google, Meta, Cars.com, Autotrader, etc.)</li>
+						<li><strong>Traditional media:</strong> TV, radio, billboards, print (~25-30% of budget)</li>
+						<li><strong>Other marketing:</strong> Sponsorships, events, direct mail</li>
+					</ul>
+					<p style="margin-top: 10px;"><strong>Typical allocations:</strong></p>
+					<ul style="margin-top: 8px;">
+						<li><strong>Conservative/profitable:</strong> 6-8% (focus on efficiency)</li>
+						<li><strong>Moderate/balanced:</strong> 8-10% (balanced growth and profit)</li>
+						<li><strong>Aggressive/growth:</strong> 10-12% (market share focused)</li>
 					</ul>
 					<p style="margin-top: 10px;"><em>Ask your GM what they're comfortable with, then adjust the percentage above. The calculator will update your targets automatically.</em></p>
 				</div>
@@ -662,7 +667,13 @@
 		<div class="footer">
 			<p>Calculations based on standard automotive dealership profitability models.</p>
 			<p>Adjust the inputs above to match your specific dealership's performance.</p>
-			<p style="margin-top: 15px; font-size: 0.85em;"><strong>Data Sources:</strong> Default funnel conversion rates based on Foureyes analysis of ~700 automotive dealers (H2 2023). Marketing % benchmarks from NADA (National Automobile Dealers Association) industry data. <a href="https://www.prweb.com/releases/automotive-dealership-data-study-identifies-appointment-rate-benchmarks-across-q3-andq4-2023-302049252.html" target="_blank" style="color: var(--accent-primary);">View Foureyes Study</a></p>
+			<p style="margin-top: 15px; font-size: 0.85em;"><strong>Data Sources:</strong></p>
+			<ul style="margin-top: 8px; font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+				<li><strong>Funnel conversion rates:</strong> Foureyes analysis of ~700 automotive dealers (H2 2023) - <a href="https://www.prweb.com/releases/automotive-dealership-data-study-identifies-appointment-rate-benchmarks-across-q3-andq4-2023-302049252.html" target="_blank" style="color: var(--accent-primary);">View Study</a></li>
+				<li><strong>Gross profit per vehicle:</strong> Haig Partners Q4 2024/Q1 2025 reports, Presidio-NCM dealer benchmarks (2024)</li>
+				<li><strong>Marketing % benchmarks:</strong> NADA dealer financial reports (2023-24) showing 6-10% of gross profit allocated to advertising</li>
+				<li><strong>Digital marketing share:</strong> NADA data showing 70-75% of dealer ad budgets are digital (2023-24)</li>
+			</ul>
 		</div>
 	</div>
 
